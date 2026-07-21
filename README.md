@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# urieel.dev — Portfolio
 
-## Getting Started
+Portfolio personal de **Uriel Mojica Mejía**, Senior Software Engineer. Sitio moderno, responsive, accesible y optimizado para SEO.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router)
+- **React 19** + **TypeScript**
+- **Tailwind CSS v4**
+- **Framer Motion** (animaciones)
+- **next-themes** (modo claro/oscuro)
+- **lucide-react** (iconografía)
+
+## Características
+
+- Diseño UI/UX moderno con gradientes, glassmorphism y fondo animado (aurora).
+- Animaciones profesionales de entrada y scroll (respetan `prefers-reduced-motion`).
+- 100% responsive (mobile-first) con menú móvil accesible.
+- Accesibilidad: HTML semántico, skip-link, `aria-label`, focus visible, contraste cuidado.
+- SEO: metadata Open Graph/Twitter, JSON-LD (Schema.org Person), `sitemap.xml`, `robots.txt`, manifest y imagen OG dinámica.
+- Modo claro/oscuro con persistencia.
+- Descarga de CV en PDF.
+
+## Secciones
+
+Hero · Sobre mí · Experiencia · Skills · Proyectos · Contacto
+
+## Desarrollo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Producción
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Personalización
 
-## Learn More
+Todo el contenido está centralizado en [`src/lib/data.ts`](src/lib/data.ts): datos personales,
+experiencia, proyectos, skills, educación y certificaciones. Los colores del tema se definen
+como variables CSS en [`src/app/globals.css`](src/app/globals.css).
 
-To learn more about Next.js, take a look at the following resources:
+## Estructura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── layout.tsx           # Metadata, fuentes, theme provider, JSON-LD
+│   ├── page.tsx             # Ensamblado de secciones
+│   ├── globals.css          # Design system (Tailwind v4)
+│   ├── sitemap.ts / robots.ts / manifest.ts
+│   ├── icon.svg             # Favicon
+│   └── opengraph-image.tsx  # Imagen OG dinámica
+├── components/
+│   ├── navbar.tsx / footer.tsx / background.tsx
+│   ├── theme-toggle.tsx / theme-provider.tsx / icons.tsx
+│   ├── sections/            # hero, about, experience, skills, projects, contact
+│   └── ui/                  # reveal, section-heading
+└── lib/
+    └── data.ts              # Contenido del portfolio
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Antes de publicar
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Actualiza `site.url` en `src/lib/data.ts` con tu dominio real.
+- Revisa el handle de Twitter/X en `src/app/layout.tsx` si aplica.
