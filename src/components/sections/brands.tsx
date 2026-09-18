@@ -92,7 +92,7 @@ export function Brands() {
               </span>
               <div>
                 <p className="font-mono text-xs uppercase tracking-widest text-accent-2">
-                  Trabajo independiente
+                  Freelance
                 </p>
                 <h2 className="mt-1 text-xl font-bold">Productos por proyecto</h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted">

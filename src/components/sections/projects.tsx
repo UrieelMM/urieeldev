@@ -18,7 +18,7 @@ export function Projects() {
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading
-          eyebrow="Trabajo seleccionado"
+          eyebrow="Experiencia"
           title="Productos completos y experiencias a escala"
           description="Plataformas y productos digitales desarrollados para clientes y proyectos personales, con enfoque en la experiencia de usuario y la calidad del código."
         />

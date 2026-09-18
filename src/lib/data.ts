@@ -12,7 +12,7 @@ export const site = {
   linkedin: "https://www.linkedin.com/in/uriel-mm",
   url: "https://urieel.dev",
   availability: "Disponible para nuevos retos",
-  cv: "/CV-Uriel-Mojica-Mejia.pdf",
+  cv: "https://firebasestorage.googleapis.com/v0/b/cehfv3.firebasestorage.app/o/institutions%2Fcehf-primaria%2Fassets%2FCV%20Uriel%20Mojica%20Meji%CC%81a.pdf?alt=media&token=a5058a7f-29a1-495c-8a7a-7d8fba72ae18",
 } as const;
 
 export const about = {
@@ -117,7 +117,7 @@ export const projects: Project[] = [
     metric: "Retail media a escala",
   },
   {
-    title: "Checkout HEB",
+    title: "HEB",
     category: "E-commerce UX",
     description:
       "Rediseño y optimización del proceso de checkout: mejor interfaz, navegación y experiencia durante la compra.",
@@ -236,7 +236,7 @@ export const independentProjects = [
     title: "CEHF",
     category: "Educación a distancia",
     description: "Plataforma digital para experiencias de educación a distancia.",
-    url: "https://cehf.live/",
+    url: "https://cehf.com.mx/",
   },
 ] as const;
 

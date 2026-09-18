@@ -78,7 +78,7 @@ export function Hero() {
               href="#projects"
               className="group inline-flex items-center gap-2 rounded-xl bg-foreground px-5 py-3 text-sm font-semibold text-background transition-transform hover:scale-105"
             >
-              Ver trabajo seleccionado
+              Ver proyectos
               <ArrowUpRight
                 size={18}
                 className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -86,6 +86,7 @@ export function Hero() {
             </a>
             <a
               href={site.cv}
+              target="_blank"
               download
               className="inline-flex items-center gap-2 rounded-xl border border-border-soft bg-card px-5 py-3 text-sm font-semibold transition-colors hover:border-accent hover:text-accent"
             >
