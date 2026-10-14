@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useId } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const CENTER = 200;
 
@@ -39,8 +40,7 @@ const orbits: {
   },
 ];
 
-function Node({ x, y, s }: { x: number; y: number; s: Shape }) {
-  const c = "url(#hvStroke)";
+function Node({ x, y, s, c }: { x: number; y: number; s: Shape; c: string }) {
   if (s === "square")
     return <rect x={x - 5} y={y - 5} width={10} height={10} rx={2} fill={c} />;
   if (s === "triangle")
@@ -78,24 +78,54 @@ const glyphs = [
   { t: "*", x: 200, y: 30 },
 ];
 
-export function HeroVisual() {
+function useTilt(enabled: boolean) {
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const rotateX = useSpring(useTransform(py, [-1, 1], [12, -12]), {
+    stiffness: 120,
+    damping: 18,
+  });
+  const rotateY = useSpring(useTransform(px, [-1, 1], [-14, 14]), {
+    stiffness: 120,
+    damping: 18,
+  });
+
+  useEffect(() => {
+    if (!enabled || !window.matchMedia("(pointer: fine)").matches) return;
+    const onMove = (e: PointerEvent) => {
+      px.set((e.clientX / window.innerWidth) * 2 - 1);
+      py.set((e.clientY / window.innerHeight) * 2 - 1);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [enabled, px, py]);
+
+  return { rotateX, rotateY };
+}
+
+export function HeroVisual({ interactive = false }: { interactive?: boolean }) {
+  const { rotateX, rotateY } = useTilt(interactive);
+  const uid = useId().replace(/:/g, "");
+  const ids = { a: `hvStroke-${uid}`, b: `hvStroke2-${uid}` };
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 1, delay: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
-      className="relative aspect-square w-full max-w-[460px]"
+      initial={{ opacity: 0, scale: 0.85, rotate: -20 }}
+      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+      transition={{ duration: 1.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      style={{ rotateX, rotateY, transformPerspective: 1000 }}
+      className="relative aspect-square w-full max-w-[460px] [transform-style:preserve-3d]"
       aria-hidden="true"
     >
       <div className="animate-float absolute inset-10 rounded-full bg-accent/20 blur-[90px]" />
 
       <svg viewBox="0 0 400 400" fill="none" className="relative h-full w-full">
         <defs>
-          <linearGradient id="hvStroke" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={ids.a} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" style={{ stopColor: "var(--accent)" }} />
             <stop offset="100%" style={{ stopColor: "var(--accent-3)" }} />
           </linearGradient>
-          <linearGradient id="hvStroke2" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id={ids.b} x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" style={{ stopColor: "var(--accent-2)" }} />
             <stop offset="100%" style={{ stopColor: "var(--accent)" }} />
           </linearGradient>
@@ -108,7 +138,7 @@ export function HeroVisual() {
             cx={CENTER}
             cy={CENTER}
             r={o.r}
-            stroke="url(#hvStroke)"
+            stroke={`url(#${ids.a})`}
             strokeWidth={1}
             strokeDasharray="2 9"
             opacity={0.3}
@@ -132,11 +162,11 @@ export function HeroVisual() {
                     y1={CENTER}
                     x2={p.x}
                     y2={p.y}
-                    stroke="url(#hvStroke)"
+                    stroke={`url(#${ids.a})`}
                     strokeWidth={1}
                     opacity={0.14}
                   />
-                  <Node x={p.x} y={p.y} s={n.s} />
+                  <Node x={p.x} y={p.y} s={n.s} c={`url(#${ids.a})`} />
                 </g>
               );
             })}
@@ -150,16 +180,16 @@ export function HeroVisual() {
         >
           <path
             d="M40 330 C 120 250, 130 380, 210 320"
-            stroke="url(#hvStroke2)"
+            stroke={`url(#${ids.b})`}
             strokeWidth={1.5}
             strokeDasharray="4 4"
             fill="none"
             opacity={0.7}
           />
-          <rect x={37} y={327} width={6} height={6} fill="url(#hvStroke2)" />
-          <rect x={207} y={317} width={6} height={6} fill="url(#hvStroke2)" />
-          <circle cx={120} cy={250} r={2.5} fill="url(#hvStroke2)" />
-          <circle cx={130} cy={380} r={2.5} fill="url(#hvStroke2)" />
+          <rect x={37} y={327} width={6} height={6} fill={`url(#${ids.b})`} />
+          <rect x={207} y={317} width={6} height={6} fill={`url(#${ids.b})`} />
+          <circle cx={120} cy={250} r={2.5} fill={`url(#${ids.b})`} />
+          <circle cx={130} cy={380} r={2.5} fill={`url(#${ids.b})`} />
         </motion.g>
 
         {/* Database cylinder (data) */}
@@ -169,8 +199,8 @@ export function HeroVisual() {
           opacity={0.75}
         >
           <g
-            transform="translate(300 250)"
-            stroke="url(#hvStroke)"
+            transform="translate(304 304)"
+            stroke={`url(#${ids.a})`}
             strokeWidth={1.6}
             fill="none"
           >
@@ -187,8 +217,8 @@ export function HeroVisual() {
           opacity={0.8}
         >
           <g
-            transform="translate(96 120)"
-            stroke="url(#hvStroke2)"
+            transform="translate(118 52)"
+            stroke={`url(#${ids.b})`}
             strokeWidth={1.6}
             fill="none"
           >
@@ -230,13 +260,16 @@ export function HeroVisual() {
           opacity: { duration: 0.6, delay: 0.7 },
           y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
         }}
+        style={{ translateZ: 60 }}
         className="glass glow-ring absolute left-1/2 top-1/2 w-[64%] -translate-x-1/2 -translate-y-1/2 rounded-2xl p-3.5"
       >
         <div className="mb-2.5 flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-red-400/80" />
           <span className="h-2 w-2 rounded-full bg-yellow-400/80" />
           <span className="h-2 w-2 rounded-full bg-green-400/80" />
-          <span className="ml-1 font-mono text-[8px] text-muted">product.ts</span>
+          <span className="ml-1 font-mono text-[8px] text-muted">
+            product.ts
+          </span>
         </div>
         <div className="space-y-1.5 font-mono text-[9px] leading-none">
           <p>
@@ -270,6 +303,7 @@ export function HeroVisual() {
           opacity: { duration: 0.6, delay: 1 },
           y: { duration: 5, repeat: Infinity, ease: "easeInOut" },
         }}
+        style={{ translateZ: 90 }}
         className="glass absolute -bottom-1 left-1 rounded-xl px-2.5 py-1.5 font-mono text-[8px]"
       >
         <span className="text-accent-2">❯</span>{" "}
@@ -286,6 +320,7 @@ export function HeroVisual() {
           opacity: { duration: 0.6, delay: 1.15 },
           y: { duration: 5.5, repeat: Infinity, ease: "easeInOut" },
         }}
+        style={{ translateZ: 110 }}
         className="glass absolute -top-1 right-2 flex items-center gap-1.5 rounded-xl px-2.5 py-1.5"
       >
         <span className="h-2.5 w-2.5 rounded-full bg-accent" />

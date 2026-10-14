@@ -1,80 +1,83 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/lib/data";
 
-export const alt = `${site.name} — ${site.role}`;
+export const alt = `${site.name} — ${site.role}: desarrollo web, e-commerce y plataformas a medida`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default function OpengraphImage() {
   return new ImageResponse(
-    (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        background: "#07070c",
+        padding: 80,
+        fontFamily: "sans-serif",
+      }}
+    >
       <div
         style={{
-          height: "100%",
-          width: "100%",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          background: "#07070c",
-          padding: 80,
-          fontFamily: "sans-serif",
+          alignItems: "center",
+          gap: 16,
+          color: "#8b7dff",
+          fontSize: 32,
+          fontWeight: 700,
         }}
       >
         <div
           style={{
+            width: 56,
+            height: 56,
+            borderRadius: 14,
+            background: "linear-gradient(135deg, #6d5efc, #22d3ee)",
             display: "flex",
             alignItems: "center",
-            gap: 16,
-            color: "#8b7dff",
-            fontSize: 32,
-            fontWeight: 700,
+            justifyContent: "center",
+            color: "#fff",
+            fontSize: 34,
           }}
         >
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 14,
-              background: "linear-gradient(135deg, #6d5efc, #22d3ee)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontSize: 34,
-            }}
-          >
-            U
-          </div>
-          {site.brand}
+          U
         </div>
+        {site.brand}
+      </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div
-            style={{
-              fontSize: 84,
-              fontWeight: 800,
-              color: "#f4f4f8",
-              lineHeight: 1.05,
-              letterSpacing: -2,
-            }}
-          >
-            {site.name}
-          </div>
-          <div
-            style={{
-              fontSize: 40,
-              fontWeight: 700,
-              background: "linear-gradient(120deg, #8b7dff, #34e0f0)",
-              backgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            {site.role}
-          </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <div
+          style={{
+            fontSize: 84,
+            fontWeight: 800,
+            color: "#f4f4f8",
+            lineHeight: 1.05,
+            letterSpacing: -2,
+          }}
+        >
+          {site.name}
         </div>
+        <div
+          style={{
+            fontSize: 40,
+            fontWeight: 700,
+            background: "linear-gradient(120deg, #8b7dff, #34e0f0)",
+            backgroundClip: "text",
+            color: "transparent",
+          }}
+        >
+          {site.role}
+        </div>
+        <div style={{ fontSize: 30, color: "#a1a1b3", display: "flex" }}>
+          Desarrollo web, e-commerce y plataformas a medida · México
+        </div>
+      </div>
 
-        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-          {["Frontend", "Backend", "E-commerce", "Google Cloud"].map((t) => (
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+        {["E-commerce VTEX IO", "Next.js", "React", "Node.js", "SaaS"].map(
+          (t) => (
             <div
               key={t}
               style={{
@@ -88,10 +91,10 @@ export default function OpengraphImage() {
             >
               {t}
             </div>
-          ))}
-        </div>
+          ),
+        )}
       </div>
-    ),
+    </div>,
     { ...size },
   );
 }

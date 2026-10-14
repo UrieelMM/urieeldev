@@ -1,17 +1,46 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { Mail, Phone, MapPin, Send, Copy, Check, Loader2 } from "lucide-react";
+import { useRef, useState, type FormEvent } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import {
+  Mail,
+  MessageCircle,
+  Phone,
+  MapPin,
+  Send,
+  Copy,
+  Check,
+  Loader2,
+} from "lucide-react";
 import { LinkedInIcon } from "@/components/icons";
 import { site } from "@/lib/data";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { Reveal } from "@/components/ui/reveal";
+import { WordsReveal } from "@/components/ui/words-reveal";
+import {
+  EASE,
+  Reveal,
+  staggerContainer,
+  staggerItem,
+} from "@/components/ui/reveal";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
 export function Contact() {
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState<FormStatus>("idle");
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "start 20%"],
+  });
+  const titleScale = useTransform(scrollYProgress, [0, 1], [0.55, 1]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
+  const letterSpacing = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["0.12em", "-0.04em"],
+  );
+  const orbScale = useTransform(scrollYProgress, [0, 1], [0.4, 1]);
+  const orbOpacity = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   const handleCopy = async () => {
     try {
@@ -65,6 +94,12 @@ export function Contact() {
       href: `mailto:${site.email}`,
     },
     {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: site.whatsappNumber,
+      href: site.whatsapp,
+    },
+    {
       icon: Phone,
       label: "Teléfono",
       value: site.phone,
@@ -80,21 +115,67 @@ export function Contact() {
   ];
 
   return (
-    <section id="contact" className="scroll-mt-24 py-24 sm:py-32">
+    <section
+      ref={ref}
+      id="contact"
+      className="relative overflow-clip py-24 sm:py-32"
+    >
+      <motion.div
+        aria-hidden
+        style={{ scale: orbScale, opacity: orbOpacity }}
+        className="pointer-events-none absolute left-1/2 top-40 -z-10 h-[38rem] w-[38rem] -translate-x-1/2 rounded-full bg-gradient-to-br from-accent/25 via-accent-2/15 to-accent-3/20 blur-[120px]"
+      />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <SectionHeading
-          eyebrow="Contacto"
-          title="¿Hablamos de tu próximo reto?"
-          description="Estoy disponible para oportunidades profesionales y proyectos donde pueda aportar en frontend, backend o e-commerce."
-        />
+        <div className="flex flex-col items-center text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: EASE }}
+            className="flex items-center gap-3 font-mono text-xs uppercase tracking-[0.25em] text-accent"
+          >
+            <span className="text-muted">06</span>
+            <span className="h-px w-10 bg-gradient-to-r from-accent to-accent-2" />
+            Contacto
+          </motion.p>
+          <motion.h2
+            style={{ scale: titleScale, opacity: titleOpacity, letterSpacing }}
+            className="mt-6 text-[3.2rem] font-extrabold leading-[0.95] sm:text-8xl lg:text-[8.5rem]"
+          >
+            <span className="block">¿Hablamos?</span>
+          </motion.h2>
+          <WordsReveal
+            as="p"
+            text="Cuéntame de tu próximo reto."
+            highlight={["reto."]}
+            delay={0.1}
+            className="mt-4 text-2xl font-semibold tracking-tight text-foreground sm:text-4xl"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+            className="mt-5 max-w-2xl text-base leading-relaxed text-muted sm:text-lg"
+          >
+            Estoy disponible para oportunidades profesionales y proyectos donde
+            pueda aportar en frontend, backend o e-commerce.
+          </motion.p>
+        </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
-          <Reveal direction="left" className="flex flex-col gap-4">
+        <div className="mt-16 grid gap-8 lg:grid-cols-[1fr_1.1fr]">
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10% 0px" }}
+            className="flex flex-col gap-4"
+          >
             {contactItems.map((c) => {
               const Icon = c.icon;
               const inner = (
                 <div className="flex items-center gap-4">
-                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent/10 text-accent">
+                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-accent/10 text-accent transition-transform duration-300 group-hover:scale-110">
                     <Icon size={18} />
                   </span>
                   <div className="min-w-0">
@@ -106,38 +187,46 @@ export function Contact() {
                 </div>
               );
               return c.href ? (
-                <a
+                <motion.a
+                  variants={staggerItem}
                   key={c.label}
                   href={c.href}
                   target={c.href.startsWith("http") ? "_blank" : undefined}
-                  rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="rounded-2xl border border-border-soft bg-card p-4 transition-colors hover:border-accent/50"
+                  rel={
+                    c.href.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                  className="group rounded-2xl border border-border-soft bg-card p-4 backdrop-blur transition-all duration-300 hover:translate-x-1 hover:border-accent/50"
                 >
                   {inner}
-                </a>
+                </motion.a>
               ) : (
-                <div
+                <motion.div
+                  variants={staggerItem}
                   key={c.label}
-                  className="rounded-2xl border border-border-soft bg-card p-4"
+                  className="rounded-2xl border border-border-soft bg-card p-4 backdrop-blur"
                 >
                   {inner}
-                </div>
+                </motion.div>
               );
             })}
 
-            <button
+            <motion.button
+              variants={staggerItem}
               type="button"
               onClick={handleCopy}
               className="inline-flex items-center justify-center gap-2 rounded-2xl border border-border-soft bg-card p-4 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
               {copied ? "¡Correo copiado!" : "Copiar correo"}
-            </button>
-          </Reveal>
+            </motion.button>
+          </motion.div>
 
           <Reveal
-            direction="right"
-            className="glass glow-ring rounded-3xl p-6 sm:p-8"
+            direction="left"
+            delay={0.15}
+            className="glass glow-ring conic-border rounded-3xl p-6 sm:p-8"
           >
             <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="grid gap-5 sm:grid-cols-2">

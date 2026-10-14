@@ -3,11 +3,13 @@
 import { motion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
+export const EASE = [0.22, 1, 0.36, 1] as const;
+
 const directions = {
-  up: { y: 28, x: 0 },
-  down: { y: -28, x: 0 },
-  left: { x: 28, y: 0 },
-  right: { x: -28, y: 0 },
+  up: { y: 40, x: 0 },
+  down: { y: -40, x: 0 },
+  left: { x: 40, y: 0 },
+  right: { x: -40, y: 0 },
   none: { x: 0, y: 0 },
 } as const;
 
@@ -16,7 +18,7 @@ type RevealProps = {
   className?: string;
   delay?: number;
   direction?: keyof typeof directions;
-  as?: "div" | "section" | "li" | "span" | "article";
+  as?: "div" | "section" | "li" | "span" | "article" | "p";
 };
 
 export function Reveal({
@@ -30,16 +32,13 @@ export function Reveal({
   const MotionTag = motion[as];
 
   const variants: Variants = {
-    hidden: { opacity: 0, ...offset },
+    hidden: { opacity: 0, filter: "blur(10px)", ...offset },
     visible: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: {
-        duration: 0.5,
-        delay,
-        ease: [0.21, 0.47, 0.32, 0.98],
-      },
+      filter: "blur(0px)",
+      transition: { duration: 0.9, delay, ease: EASE },
     },
   };
 
@@ -49,7 +48,7 @@ export function Reveal({
       variants={variants}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-10% 0px" }}
     >
       {children}
     </MotionTag>
@@ -59,15 +58,16 @@ export function Reveal({
 export const staggerContainer: Variants = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.09, delayChildren: 0.05 },
   },
 };
 
 export const staggerItem: Variants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 32, filter: "blur(8px)" },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: [0.21, 0.47, 0.32, 0.98] },
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: EASE },
   },
 };

@@ -1,12 +1,57 @@
+"use client";
+
+import { useRef } from "react";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  type MotionValue,
+} from "framer-motion";
 import { Mail, ArrowUp } from "lucide-react";
 import { LinkedInIcon } from "@/components/icons";
 import { site, navLinks } from "@/lib/data";
 
+const wordmark = "urieel.dev".split("");
+
+function Letter({
+  char,
+  index,
+  progress,
+}: {
+  char: string;
+  index: number;
+  progress: MotionValue<number>;
+}) {
+  const start = index * 0.05;
+  const y = useTransform(progress, [start, start + 0.5], ["100%", "0%"]);
+  const rotate = useTransform(progress, [start, start + 0.5], [12, 0]);
+  return (
+    <motion.span
+      style={{ y, rotate }}
+      className={`inline-block ${index >= 6 ? "text-gradient-animated" : ""}`}
+    >
+      {char}
+    </motion.span>
+  );
+}
+
 export function Footer() {
   const year = new Date().getFullYear();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end end"],
+  });
+
+  const iconBtn =
+    "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border-soft bg-card transition-all duration-300 hover:-translate-y-1 hover:border-accent hover:text-accent";
+
   return (
-    <footer className="border-t border-border-soft bg-background-subtle">
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
+    <footer
+      ref={ref}
+      className="relative overflow-clip border-t border-border-soft bg-background-subtle"
+    >
+      <div className="mx-auto max-w-6xl px-4 pt-14 sm:px-6">
         <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="max-w-sm">
             <a
@@ -20,8 +65,8 @@ export function Footer() {
               <span className="text-accent">.dev</span>
             </a>
             <p className="mt-4 text-sm leading-relaxed text-muted">
-              {site.role} con especialidad frontend y experiencia construyendo
-              soluciones backend, cloud y e-commerce.
+              {site.role} en México. Desarrollo web, e-commerce en VTEX IO y
+              plataformas a medida para marcas de México y Latinoamérica.
             </p>
           </div>
 
@@ -33,8 +78,9 @@ export function Footer() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm text-muted transition-colors hover:text-foreground"
+                className="group flex w-fit items-center text-sm text-muted transition-colors hover:text-foreground"
               >
+                <span className="h-px w-0 bg-accent transition-all duration-300 group-hover:mr-2 group-hover:w-4" />
                 {link.label}
               </a>
             ))}
@@ -50,22 +96,18 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border-soft bg-card transition-colors hover:border-accent hover:text-accent"
+                className={iconBtn}
               >
                 <LinkedInIcon size={18} />
               </a>
               <a
                 href={`mailto:${site.email}`}
                 aria-label="Email"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border-soft bg-card transition-colors hover:border-accent hover:text-accent"
+                className={iconBtn}
               >
                 <Mail size={18} />
               </a>
-              <a
-                href="#hero"
-                aria-label="Volver arriba"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border-soft bg-card transition-colors hover:border-accent hover:text-accent"
-              >
+              <a href="#hero" aria-label="Volver arriba" className={iconBtn}>
                 <ArrowUp size={18} />
               </a>
             </div>
@@ -80,6 +122,15 @@ export function Footer() {
             Hecho con Next.js, TypeScript &amp; Tailwind CSS
           </p>
         </div>
+      </div>
+
+      <div
+        aria-hidden
+        className="pointer-events-none mt-6 select-none overflow-hidden text-center font-mono pb-[2vw] text-[14vw] font-bold leading-none tracking-tighter text-foreground/90 lg:text-[11.5vw]"
+      >
+        {wordmark.map((char, i) => (
+          <Letter key={i} char={char} index={i} progress={scrollYProgress} />
+        ))}
       </div>
     </footer>
   );
