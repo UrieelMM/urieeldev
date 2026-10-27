@@ -24,15 +24,15 @@ export function Brands() {
   return (
     <section
       aria-labelledby="brands-heading"
-      className="relative scroll-mt-24 py-20 sm:py-28"
+      className="relative scroll-mt-24 overflow-x-clip pb-20 pt-8 sm:py-28"
     >
       <motion.p
         id="brands-heading"
-        initial={{ opacity: 0, y: 16, letterSpacing: "0.6em" }}
-        whileInView={{ opacity: 1, y: 0, letterSpacing: "0.3em" }}
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-10% 0px" }}
         transition={{ duration: 1.2, ease: EASE }}
-        className="px-4 text-center font-mono text-xs uppercase text-muted"
+        className="px-4 text-center font-mono text-xs uppercase tracking-[0.22em] text-muted sm:tracking-[0.3em]"
       >
         Experiencia en marcas y productos
       </motion.p>

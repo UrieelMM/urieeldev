@@ -14,29 +14,29 @@ export function Manifesto() {
     offset: ["start start", "end end"],
   });
 
-  const textProgress = useTransform(scrollYProgress, [0.05, 0.75], [0, 1]);
+  const textProgress = useTransform(scrollYProgress, [0.05, 0.85], [0, 1]);
   const ringsRotate = useTransform(scrollYProgress, [0, 1], [0, 140]);
   const ringsScale = useTransform(scrollYProgress, [0, 1], [0.7, 1.35]);
   const ringsOpacity = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.85, 1],
-    [0, 1, 1, 0],
+    [0, 0.2, 0.92, 1],
+    [0, 1, 1, 0.2],
   );
-  const draw = useTransform(scrollYProgress, [0, 0.8], [0, 1]);
-  const contentScale = useTransform(scrollYProgress, [0.82, 1], [1, 0.94]);
+  const draw = useTransform(scrollYProgress, [0, 0.85], [0, 1]);
+  const contentScale = useTransform(scrollYProgress, [0.88, 1], [1, 0.96]);
   const contentOpacity = useTransform(
     scrollYProgress,
-    [0, 0.06, 0.88, 1],
-    [0, 1, 1, 0],
+    [0, 0.06, 0.92, 1],
+    [0, 1, 1, 0.25],
   );
-  const footY = useTransform(scrollYProgress, [0.6, 0.8], [20, 0]);
-  const footOpacity = useTransform(scrollYProgress, [0.6, 0.8], [0, 1]);
+  const footY = useTransform(scrollYProgress, [0.65, 0.85], [20, 0]);
+  const footOpacity = useTransform(scrollYProgress, [0.65, 0.85], [0, 1]);
 
   return (
     <section
       ref={ref}
       aria-label="Manifiesto"
-      className="relative h-[240vh] sm:h-[280vh]"
+      className="relative h-[180svh] sm:h-[260svh]"
     >
       <div className="sticky top-0 flex h-svh items-center overflow-hidden">
         <motion.svg
