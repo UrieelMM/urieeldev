@@ -488,7 +488,7 @@ add_project(
     doc,
     "YW Studio",
     "Programa de lealtad",
-    "https://admin.ywstudio.com.mx/",
+    "https://www.ywstudio.com.mx/",
     "admin.ywstudio.com.mx",
     "Sistema web de programa de lealtad para un estudio de baile y cafetería, desarrollado como producto independiente para centralizar la operación del programa y la experiencia de sus usuarios.",
 )

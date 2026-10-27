@@ -68,11 +68,19 @@ export function Navbar() {
   });
 
   useEffect(() => {
-    if (open) lenis?.stop();
-    else lenis?.start();
+    if (lenis) {
+      if (open) lenis.stop();
+      else lenis.start();
+    } else {
+      // Touch devices use native scrolling (no Lenis): lock it while the menu is open.
+      document.documentElement.style.overflow = open ? "hidden" : "";
+    }
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      if (!lenis) document.documentElement.style.overflow = "";
+    };
   }, [open, lenis]);
 
   return (

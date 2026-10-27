@@ -58,10 +58,10 @@ export function Background() {
         </motion.div>
       </div>
       <motion.div
-        className="absolute inset-0 opacity-40"
+        className="touch-hide absolute inset-0 opacity-40"
         style={{ background: spotlight }}
       />
-      <div className="noise absolute inset-0 opacity-[0.035] mix-blend-overlay dark:opacity-[0.06]" />
+      <div className="touch-hide noise absolute inset-0 opacity-[0.035] mix-blend-overlay dark:opacity-[0.06]" />
     </div>
   );
 }

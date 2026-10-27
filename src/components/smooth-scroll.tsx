@@ -29,12 +29,22 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    const instance = new Lenis({
-      autoRaf: true,
-      lerp: 0.09,
-      wheelMultiplier: 0.95,
-      respectReducedMotion: true,
-    });
+    // Lenis only adds value for wheel/trackpad input. On touch devices (iOS
+    // especially) it registers non-passive touch listeners that force every
+    // scroll gesture to wait on the main thread, which makes scrolling feel
+    // stuck while animations are running. Keep native momentum scroll there.
+    const isTouch = window.matchMedia(
+      "(hover: none), (pointer: coarse)",
+    ).matches;
+
+    const instance = isTouch
+      ? null
+      : new Lenis({
+          autoRaf: true,
+          lerp: 0.09,
+          wheelMultiplier: 0.95,
+          respectReducedMotion: true,
+        });
     // Lenis must be created on the client; expose it to consumers once ready.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLenis(instance);
@@ -60,26 +70,37 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
       if (!target) return;
 
       event.preventDefault();
-      instance.start();
 
       const isTop = hash === "#hero";
-      const distance = isTop
-        ? window.scrollY
-        : Math.abs(target.getBoundingClientRect().top + NAV_OFFSET);
-      const duration = Math.min(2.2, Math.max(1, distance / 2600));
+      const focusTarget = () => {
+        if (!target.hasAttribute("tabindex")) {
+          target.setAttribute("tabindex", "-1");
+        }
+        target.focus({ preventScroll: true });
+      };
 
-      instance.scrollTo(isTop ? 0 : target, {
-        offset: isTop ? 0 : NAV_OFFSET,
-        duration,
-        easing: easeInOutExpo,
-        force: true,
-        onComplete: () => {
-          if (!target.hasAttribute("tabindex")) {
-            target.setAttribute("tabindex", "-1");
-          }
-          target.focus({ preventScroll: true });
-        },
-      });
+      if (instance) {
+        instance.start();
+        const distance = isTop
+          ? window.scrollY
+          : Math.abs(target.getBoundingClientRect().top + NAV_OFFSET);
+        const duration = Math.min(2.2, Math.max(1, distance / 2600));
+
+        instance.scrollTo(isTop ? 0 : target, {
+          offset: isTop ? 0 : NAV_OFFSET,
+          duration,
+          easing: easeInOutExpo,
+          force: true,
+          onComplete: focusTarget,
+        });
+      } else {
+        const top = isTop
+          ? 0
+          : target.getBoundingClientRect().top + window.scrollY + NAV_OFFSET;
+        window.scrollTo({ top, behavior: "smooth" });
+        focusTarget();
+      }
+
       history.replaceState(
         null,
         "",
@@ -90,7 +111,7 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
     document.addEventListener("click", onClick);
     return () => {
       document.removeEventListener("click", onClick);
-      instance.destroy();
+      instance?.destroy();
       setLenis(null);
     };
   }, []);

@@ -364,6 +364,39 @@
   animation-play-state: paused;
 }
 
+/* ------------------------------------------------------------------
+   Touch devices (phones / tablets): same look, cheaper rendering.
+   Mobile Safari re-rasterizes large blur() filters, backdrop filters and
+   full-screen blend layers while scrolling, which made scrolling stutter
+   on iPhone. These rules are unlayered so they win over utilities.
+------------------------------------------------------------------- */
+@media (hover: none), (pointer: coarse) {
+  /* Desktop-only layers (cursor spotlight, blended noise). */
+  .touch-hide {
+    display: none;
+  }
+
+  /* Glass cards: what sits behind them is already a soft blurred glow. */
+  .backdrop-blur,
+  .glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* Glow orbs: swap the huge blur() for a visually equivalent radial fade. */
+  [class*="blur-["] {
+    filter: none;
+    -webkit-mask-image: radial-gradient(closest-side, #000 15%, transparent);
+    mask-image: radial-gradient(closest-side, #000 15%, transparent);
+  }
+
+  /* Motion reveals keep their fade + movement but skip the animated blur
+     (framer-motion writes it as an inline style). */
+  [style*="blur("] {
+    filter: none !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

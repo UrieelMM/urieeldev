@@ -4,6 +4,7 @@ import { useRef, type ReactNode } from "react";
 import {
   motion,
   useAnimationFrame,
+  useInView,
   useMotionValue,
   useReducedMotion,
   useScroll,
@@ -28,6 +29,9 @@ export function VelocityMarquee({
   copies = 4,
 }: VelocityMarqueeProps) {
   const reduce = useReducedMotion();
+  const containerRef = useRef<HTMLDivElement>(null);
+  // Skip per-frame work while the marquee is off-screen.
+  const inView = useInView(containerRef, { margin: "100px 0px" });
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
@@ -49,7 +53,7 @@ export function VelocityMarquee({
   const direction = useRef(1);
 
   useAnimationFrame((_, delta) => {
-    if (reduce) return;
+    if (reduce || !inView) return;
     let moveBy = direction.current * (baseVelocity / copies) * (delta / 1000);
     const factor = velocityFactor.get();
     if (factor < 0) direction.current = -1;
@@ -59,7 +63,7 @@ export function VelocityMarquee({
   });
 
   return (
-    <div className={`overflow-hidden ${className}`}>
+    <div ref={containerRef} className={`overflow-hidden ${className}`}>
       <motion.div className="flex w-max flex-nowrap" style={{ x, skewX: skew }}>
         {Array.from({ length: copies }).map((_, i) => (
           <div
